@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Confessit | My Confessions{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+    <div>
+        <h2 class="brand-title">My confessions</h2>
+        <p class="text-muted mb-0">A private view of your submitted stories.</p>
+    </div>
+    <a class="btn btn-sea" href="{% url 'confession_create' %}">Write another</a>
+</div>
+
+<div class="row g-4">
+    {% for confession in object_list %}
+        <div class="col-md-6 col-lg-4 fade-in">
+            <div class="confession-card p-4 h-100">
+                <div class="confession-meta mb-2">{{ confession.created_at|date:"M d, Y" }}</div>
+                <h5 class="brand-title">{{ confession.title }}</h5>
+                {% if not confession.is_approved %}
+                    <span class="pending-pill mt-2">Pending</span>
+                {% endif %}
+                <p class="text-muted mt-3">{{ confession.description|truncatechars:160 }}</p>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-link p-0" href="{% url 'confession_detail' confession.pk %}">Open</a>
+                    <a class="btn btn-link text-danger p-0" href="{% url 'confession_delete' confession.id %}">Delete</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="confession-card p-4 text-center">
+                <h5 class="brand-title">Nothing here yet</h5>
+                <p class="text-muted">Share your first confession to see it here.</p>
+                <a class="btn btn-sea" href="{% url 'confession_create' %}">Share a confession</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

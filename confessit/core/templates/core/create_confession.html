@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Confessit | New Confession{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="form-surface fade-in">
+            <h2 class="brand-title mb-3">Share your confession</h2>
+            <p class="text-muted mb-4">Write honestly. Everything is reviewed before it appears.</p>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="text-danger small mb-3">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                <button class="btn btn-sea" type="submit">Submit confession</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Confessit | Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="form-surface fade-in">
+            <h2 class="brand-title mb-3">Welcome back</h2>
+            <p class="text-muted mb-4">Pick up your story where you left it.</p>
+            <form method="POST">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button class="btn btn-sea w-100" type="submit">Login</button>
+            </form>
+            <p class="text-muted mt-3">New here? <a href="{% url 'register' %}">Create an account</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Confessit | Profile{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="confession-card p-4 fade-in">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <img class="rounded-circle border" src="{{ profile.avatar.url }}" alt="{{ user.username }} avatar" width="72" height="72">
+                <div>
+                    <h3 class="brand-title mb-0">{{ user.username }}</h3>
+                    {% if is_owner %}
+                        <p class="confession-meta mb-1">{{ user.email|default:"No email on file" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="text-muted">Member since {{ user.date_joined|date:"M Y" }}</p>
+            <p class="text-muted mb-3">Confessions shared: {{ confession_count }}</p>
+            {% if is_owner %}
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn btn-sea" href="{% url 'confession_create' %}">New confession</a>
+                    <a class="btn btn-outline-dark" href="{% url 'change_profile' %}">Edit profile</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="confession-card p-4 fade-in">
+            {% if is_owner %}
+                <h4 class="brand-title">Your corner</h4>
+                <p class="text-muted">Add a short bio or recent highlights in the future. This space is ready for your story.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a class="btn btn-outline-dark" href="{% url 'my_confessions' %}">View my confessions</a>
+                </div>
+            {% else %}
+                <h4 class="brand-title">Profile overview</h4>
+                <p class="text-muted">General profile details are shown for other members.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
