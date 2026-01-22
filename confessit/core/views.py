@@ -198,3 +198,17 @@ def like_dislike_post(request, confession_id):
             {'confession': confession, 'is_favourited': is_favourited},
         )
     return redirect(request.META.get('HTTP_REFERER', confession.get_absolute_url()))
+
+class Liked_Confessions(LoginRequiredMixin, ListView):
+    model = Confession
+    template_name = 'core/liked_confessions.html'
+    login_url = 'login'
+    def get_queryset(self):
+        qs = (
+            Confession.objects.filter(favourites=self.request.user)
+            .select_related('user')
+            .prefetch_related("comments", "favourites")
+            .only('title', 'description', 'created_at', 'user')
+        )
+        return qs
+    

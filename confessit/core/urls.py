@@ -14,5 +14,6 @@ urlpatterns = [
     path('confession/<int:confess_id>/delete/',views.delete_confession,name='confession_delete'),
     path('search_results/',views.search_views,name='search'),
     path('change-profile/',views.UpdateProfileView.as_view(),name='change_profile'),
+    path('liked-confessions/',views.Liked_Confessions.as_view(),name='liked_confessions'),
     
 ]

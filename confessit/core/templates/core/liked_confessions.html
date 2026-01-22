@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Confessit | Liked Confessions{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+    <div>
+        <h2 class="brand-title">Liked confessions</h2>
+        <p class="text-muted mb-0">Stories you have marked with a heart.</p>
+    </div>
+    <a class="btn btn-sea" href="{% url 'home' %}">Browse more</a>
+</div>
+
+<div class="row g-4">
+    {% for confession in object_list %}
+        <div class="col-md-6 col-lg-4 fade-in">
+            <div class="confession-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    {% if confession.user %}
+                        <a class="btn btn-outline-dark btn-sm" href="{% url 'profile' confession.user.pk %}">
+                            {{ confession.user.username }}
+                        </a>
+                    {% else %}
+                        <span class="confession-meta">Anonymous</span>
+                    {% endif %}
+                    <div class="confession-meta">{{ confession.created_at|date:"M d, Y" }}</div>
+                </div>
+                <h5 class="brand-title">{{ confession.title }}</h5>
+                <p class="text-muted mt-3">{{ confession.description|truncatechars:160 }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a class="btn btn-link p-0" href="{% url 'confession_detail' confession.pk %}">Read more</a>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="confession-meta">
+                            {{ confession.comments.count }} comment{{ confession.comments.count|pluralize }}
+                        </span>
+                        <span class="confession-meta">
+                            {{ confession.favourites.count }} like{{ confession.favourites.count|pluralize }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="confession-card p-4 text-center">
+                <h5 class="brand-title">No liked confessions yet</h5>
+                <p class="text-muted">Tap the heart on a confession to save it here.</p>
+                <a class="btn btn-sea" href="{% url 'home' %}">Explore confessions</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
