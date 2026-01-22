@@ -215,4 +215,10 @@ class Liked_Confessions(LoginRequiredMixin, ListView):
             .only('title', 'description', 'created_at', 'user')
         )
         return qs
+
+def ads_txt(request):
+    return HttpResponse(
+        "google.com, pub-2883857838064509, DIRECT, f08c47fec0942fa0",
+        content_type="text/plain",
+    )
     
