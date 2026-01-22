@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.db import models
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView,CreateView,DetailView,View,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
@@ -16,7 +17,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 # Create your views here.
-@cache_page(30)
+@method_decorator(cache_page(30), name="dispatch")
 class HomePage(ListView):
     model = Confession
     template_name = 'core/home.html'
@@ -57,7 +58,7 @@ class MakeConfession(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-@cache_page(30)
+@method_decorator(cache_page(30), name="dispatch")
 class ConfessionDetails(DetailView):
     model = Confession
     template_name = 'core/confession_detail.html'
@@ -114,7 +115,7 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request,'core/login.html',context={'form':form})
-@cache_page(30)
+@method_decorator(cache_page(30), name="dispatch")
 class MyConfessions(LoginRequiredMixin, ListView):
     model = Confession
     template_name = 'core/my_confession.html'
@@ -140,7 +141,7 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-@cache_page(30)
+@method_decorator(cache_page(30), name="dispatch")
 class ProfileView(DetailView):
     model = User
     template_name = 'core/profile.html'
