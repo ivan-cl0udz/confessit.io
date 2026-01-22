@@ -3,5 +3,6 @@ Pillow==12.1.0
 gunicorn==21.2.0
 dj-database-url==2.2.0
 psycopg==3.2.9
+redis==5.2.1
 dj-database-url==2.2.0
 psycopg==3.2.9
