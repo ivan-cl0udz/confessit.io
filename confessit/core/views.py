@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db import models
+from django.views.decorators.cache import cache_page
 from django.views.generic import ListView,CreateView,DetailView,View,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
@@ -15,12 +16,17 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 # Create your views here.
+@cache_page(30)
 class HomePage(ListView):
     model = Confession
     template_name = 'core/home.html'
     def get_queryset(self):
-        base_qs = Confession.objects.filter(
-            created_at__gt=(timezone.now() - timedelta(days=3))
+        base_qs = (
+            Confession.objects.filter(
+                created_at__gt=(timezone.now() - timedelta(days=3))
+            )
+            .select_related("user")
+            .prefetch_related("comments", "favourites")
         )
         if self.request.user.is_authenticated:
             queryset = base_qs.filter(
@@ -51,11 +57,18 @@ class MakeConfession(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
+@cache_page(30)
 class ConfessionDetails(DetailView):
     model = Confession
     template_name = 'core/confession_detail.html'
     context_object_name = 'post_object'
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("user")
+            .prefetch_related("comments", "comments__user", "favourites")
+        )
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect(f"{reverse('login')}?next={request.path}")
@@ -101,12 +114,17 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request,'core/login.html',context={'form':form})
-            
+@cache_page(30)
 class MyConfessions(LoginRequiredMixin, ListView):
     model = Confession
     template_name = 'core/my_confession.html'
     def get_queryset(self):
-        queryset = Confession.objects.filter(user=self.request.user).only('title', 'created_at')
+        queryset = (
+            Confession.objects.filter(user=self.request.user)
+            .select_related("user")
+            .prefetch_related("comments", "favourites")
+            .only('title', 'created_at', 'user')
+        )
         return queryset
     login_url = 'login'
 def delete_confession(request,confess_id):
@@ -122,11 +140,14 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-
+@cache_page(30)
 class ProfileView(DetailView):
     model = User
     template_name = 'core/profile.html'
     context_object_name = 'user'
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("profile")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
