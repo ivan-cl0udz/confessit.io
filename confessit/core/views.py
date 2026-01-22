@@ -9,7 +9,7 @@ from .models import Comment,Confession,Profile
 from .forms import ConfessionForm, RegisterForm, ProfileUpdateForm,CommentForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.http import  Http404
+from django.http import  Http404, HttpResponse
 from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -17,7 +17,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 # Create your views here.
-@method_decorator(cache_page(30), name="dispatch")
+@method_decorator(cache_page(10), name="dispatch")
 class HomePage(ListView):
     model = Confession
     template_name = 'core/home.html'
@@ -58,7 +58,7 @@ class MakeConfession(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-@method_decorator(cache_page(30), name="dispatch")
+@method_decorator(cache_page(20), name="dispatch")
 class ConfessionDetails(DetailView):
     model = Confession
     template_name = 'core/confession_detail.html'
@@ -193,6 +193,9 @@ def like_dislike_post(request, confession_id):
         confession.favourites.add(request.user)
     is_favourited = confession.favourites.filter(id=request.user.id).exists()
     if request.headers.get('HX-Request') == 'true':
+        hx_target = request.headers.get('HX-Target', '')
+        if not is_favourited and hx_target.startswith('liked-card-'):
+            return HttpResponse('')
         return render(
             request,
             'core/partials/like_button.html',
