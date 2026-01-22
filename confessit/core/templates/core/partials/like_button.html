@@ -2,8 +2,8 @@
       action="{% url 'confession_like' confession.pk %}"
       class="like-form"
       hx-post="{% url 'confession_like' confession.pk %}"
-      hx-target="this"
-      hx-swap="outerHTML">
+      hx-target="{{ hx_target|default:'this' }}"
+      hx-swap="{{ hx_swap|default:'outerHTML' }}">
     {% csrf_token %}
     <button class="like-btn {% if is_favourited %}is-active{% endif %}" type="submit" aria-label="Like confession">
         <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
