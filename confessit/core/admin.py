@@ -7,7 +7,7 @@ class AdminClass(admin.AdminSite):
         return request.user.is_active and request.user.is_superuser and request.user.is_authenticated
 
     def login(self, request, extra_context=None):
-        if not request.user.is_authenticated and not request.user.is_superuser:
+        if not request.user.is_superuser:
             raise Http404
         return super().login(request, extra_context=extra_context)
     
