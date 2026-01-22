@@ -4,5 +4,6 @@ gunicorn==21.2.0
 dj-database-url==2.2.0
 psycopg==3.2.9
 redis==5.2.1
+django-redis==5.4.0
 dj-database-url==2.2.0
 psycopg==3.2.9
