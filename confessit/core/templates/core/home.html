@@ -55,6 +55,12 @@
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <a class="btn btn-link p-0" href="{% url 'confession_detail' confession.pk %}">Read more</a>
                     <div class="d-flex align-items-center gap-2">
+                        <a class="like-btn" href="{% url 'confession_report' confession.pk %}" aria-label="Report confession">
+                            <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 2h2v2h9.5l-.9 4H8v10H6V2zm2 8h7.6l.7-3H8v3zm0 10h2v2H8v-2z"/>
+                            </svg>
+                            <span class="like-count">Report</span>
+                        </a>
                         <a class="like-btn" href="{% url 'confession_detail' confession.pk %}" aria-label="View comments">
                             <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M20 3H4c-1.1 0-2 .9-2 2v15l4-4h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>

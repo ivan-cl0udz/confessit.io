@@ -21,6 +21,12 @@
             <div class="d-flex gap-2 mt-4">
                 <a class="btn btn-sea" href="{% url 'confession_create' %}">Share your own</a>
                 <a class="btn btn-outline-dark" href="{% url 'home' %}">Back home</a>
+                <a class="like-btn" href="{% url 'confession_report' object.pk %}" aria-label="Report confession">
+                    <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 2h2v2h9.5l-.9 4H8v10H6V2zm2 8h7.6l.7-3H8v3zm0 10h2v2H8v-2z"/>
+                    </svg>
+                    <span class="like-count">Report</span>
+                </a>
                 {% if user.is_authenticated %}
                     {% include "core/partials/like_button.html" with confession=object is_favourited=is_favourited %}
                 {% else %}

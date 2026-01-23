@@ -23,6 +23,7 @@
                 <p class="text-muted mt-3">{{ confession.description|truncatechars:160 }}</p>
                 <div class="d-flex gap-2">
                     <a class="btn btn-link p-0" href="{% url 'confession_detail' confession.pk %}">Open</a>
+                    <a class="btn btn-link p-0" href="{% url 'confession_report' confession.pk %}">Report</a>
                     <a class="btn btn-link text-danger p-0" href="{% url 'confession_delete' confession.id %}">Delete</a>
                 </div>
             </div>
