@@ -16,9 +16,10 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from config import host_email
 from django.urls import reverse
 # Create your views here.
-@method_decorator(cache_page(10), name="dispatch")
+@method_decorator(cache_page(5), name="dispatch")
 class HomePage(ListView):
     model = Confession
     template_name = 'core/home.html'
@@ -223,10 +224,25 @@ def ads_txt(request):
         content_type="text/plain",
     )
     
-def report(request,confession_id):
-    post = Confession.objects.get(id=confession_id)
+def report(request, confession_id):
+    post = get_object_or_404(Confession, id=confession_id)
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
             contents = form.cleaned_data.get('message')
+            send_mail(
+                'New complain on post',
+                message=(
+                    "New complaint received on post, "
+                    f"details = [id={post.id},user={post.user}], "
+                    f"message = {contents}"
+                ),
+                from_email=host_email,
+                recipient_list=[host_email],
+            )
+            messages.success(request, "Thanks for the report. We'll review it.")
+            return redirect('confession_detail', pk=post.pk)
+    else:
+        form = ReportForm()
+    return render(request, 'core/report_post.html', {'form': form, 'post': post})
             

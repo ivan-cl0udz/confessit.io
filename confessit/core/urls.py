@@ -10,6 +10,7 @@ urlpatterns = [
     path('confessions/new/',views.MakeConfession.as_view(),name='confession_create'),
     path('confession/<int:pk>/',views.ConfessionDetails.as_view(),name='confession_detail'),
     path('confession/<int:confession_id>/like/',views.like_dislike_post,name='confession_like'),
+    path('confession/<int:confession_id>/report/',views.report,name='confession_report'),
     path('my-confessions/',views.MyConfessions.as_view(),name='my_confessions'),
     path('confession/<int:confess_id>/delete/',views.delete_confession,name='confession_delete'),
     path('search_results/',views.search_views,name='search'),
