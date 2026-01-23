@@ -88,3 +88,12 @@ class CommentForm(forms.ModelForm):
                 'placeholder': 'Write your comment',
             }),
         }
+class ReportForm(forms.Form):
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Explain why you are reporting this post',
+            'rows': 4
+        }),
+        label='Report Message'
+    )

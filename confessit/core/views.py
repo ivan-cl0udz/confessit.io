@@ -6,10 +6,11 @@ from django.views.generic import ListView,CreateView,DetailView,View,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Comment,Confession,Profile
-from .forms import ConfessionForm, RegisterForm, ProfileUpdateForm,CommentForm
+from .forms import ConfessionForm, RegisterForm, ProfileUpdateForm,CommentForm,ReportForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import  Http404, HttpResponse
+from django.core.mail import send_mail
 from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -222,3 +223,10 @@ def ads_txt(request):
         content_type="text/plain",
     )
     
+def report(request,confession_id):
+    post = Confession.objects.get(id=confession_id)
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            contents = form.cleaned_data.get('message')
+            
