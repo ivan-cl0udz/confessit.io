@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Confessit | My Confessions{% endblock %}
 
@@ -18,9 +19,7 @@
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <div class="confession-meta">{{ confession.created_at|date:"M d, Y" }}</div>
                     <a class="like-btn" href="{% url 'confession_report' confession.pk %}" aria-label="Report confession">
-                        <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6 2h2v2h9.5l-.9 4H8v10H6V2zm2 8h7.6l.7-3H8v3zm0 10h2v2H8v-2z"/>
-                        </svg>
+                        <img class="like-icon" src="{% static 'core/icons/flag-unfilled.svg' %}" alt="">
                     </a>
                 </div>
                 <h5 class="brand-title">{{ confession.title }}</h5>
