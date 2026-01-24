@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Confession, Profile,Comment
+from .models import Confession, Profile,Comment,Tag
 class ConfessionForm(forms.ModelForm):
     class Meta:
         model = Confession
-        fields = ['title', 'description']
+        fields = ['title', 'description','tags']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -16,6 +16,7 @@ class ConfessionForm(forms.ModelForm):
                 'placeholder': 'Enter confession description',
                 'rows': 5
             }),
+            'tags': forms.CheckboxSelectMultiple(),
         }
 
 
@@ -100,3 +101,14 @@ class ReportForm(forms.Form):
         }),
         label='Report Message'
     )
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter tag',
+            }),
+        }

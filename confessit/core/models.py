@@ -3,6 +3,10 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from PIL import Image
+class Tag(models.Model):
+    name = models.CharField(max_length=10)
+    def __str__(self):
+        return self.name
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
@@ -19,6 +23,7 @@ class Confession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=30)
     description = models.TextField()
+    tags = models.ManyToManyField('Tag',null=False)
     created_at = models.DateTimeField(auto_created=True,auto_now_add=True)
     comments = models.ManyToManyField('Comment', blank=True)
     is_approved = models.BooleanField(default=False)

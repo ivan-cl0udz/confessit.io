@@ -11,21 +11,69 @@
             <form method="POST">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% if field.errors %}
-                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
+                    {% if field.name == "tags" %}
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#tagModal">
+                                    Add tag
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                {{ field }}
+                            </div>
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
                 {% if form.non_field_errors %}
                     <div class="text-danger small mb-3">{{ form.non_field_errors|striptags }}</div>
                 {% endif %}
                 <button class="btn btn-sea" type="submit">Submit confession</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagModalLabel">Add a tag</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{% url 'add_tag' %}">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'confession_create' %}">
+                    <div class="mb-3">
+                        {{ tag_form.name.label_tag }}
+                        {{ tag_form.name }}
+                        {% if tag_form.name.errors %}
+                            <div class="text-danger small mt-1">{{ tag_form.name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sea">Save tag</button>
+                </div>
             </form>
         </div>
     </div>

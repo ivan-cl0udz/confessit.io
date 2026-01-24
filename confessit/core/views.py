@@ -5,8 +5,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView,CreateView,DetailView,View,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Comment,Confession,Profile
-from .forms import ConfessionForm, RegisterForm, ProfileUpdateForm,CommentForm,ReportForm
+from .models import Comment,Confession,Profile,Tag
+from .forms import ConfessionForm, RegisterForm, ProfileUpdateForm,CommentForm,ReportForm,TagForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import  Http404, HttpResponse
@@ -95,6 +95,10 @@ class MakeConfession(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag_form'] = TagForm()
+        return context
 @method_decorator(cache_page(20), name="dispatch")
 class ConfessionDetails(DetailView):
     model = Confession
@@ -303,3 +307,23 @@ def reply_comment(request,comment_id):
         messages.error(request, 'Form data is incorrect')
     return redirect(request.META.get('HTTP_REFERER', confession.get_absolute_url()))
 
+
+@login_required(login_url='login')
+def add_tag(request):
+    if request.method != "POST":
+        return redirect('confession_create')
+    form = TagForm(request.POST)
+    if form.is_valid():
+        name = form.cleaned_data.get('name')
+        tag, created = Tag.objects.get_or_create(name=name)
+        if created:
+            messages.success(request, f'Tag "{tag.name}" added.')
+        else:
+            messages.info(request, f'Tag "{tag.name}" already exists.')
+    else:
+        messages.error(request, 'Tag name is required.')
+    next_url = request.POST.get('next')
+    if next_url:
+        return redirect(next_url)
+    return redirect('confession_create')
+        
