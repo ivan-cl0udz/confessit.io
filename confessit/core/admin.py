@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.http import Http404
-from .models import Confession,Comment
+from .models import Confession,Comment,Tag
 # Register your models here.
 class AdminClass(admin.AdminSite):
     def has_permission(self, request):
@@ -13,5 +13,5 @@ class AdminClass(admin.AdminSite):
     
 admin_site = AdminClass()
 admin_site.register(Comment)
-
+admin_site.register(Tag)
 admin_site.register(Confession)
