@@ -167,6 +167,9 @@ def search_views(request):
     
     return render(request, 'core/search_results.html', context={'filtered_products': filtering})
 
+def terms_view(request):
+    return render(request, 'core/terms.html')
+
 class UpdateProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileUpdateForm
