@@ -20,7 +20,5 @@ urlpatterns = [
     path('confessions/', views.AllConfessions.as_view(), name='all_confessions'),
     path('ads.txt', views.ads_txt, name='ads_txt'),
     path('terms/', views.terms_view, name='terms'),
-    path('tags/add/', views.add_tag, name='add_tag'),
-    path('tags/search/', views.tag_search, name='tag_search'),
     
 ]

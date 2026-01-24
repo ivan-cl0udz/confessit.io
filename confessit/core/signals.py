@@ -1,5 +1,5 @@
 from django.db.models.signals import post_save,pre_save
-from .models import Comment,Confession,Profile,Tag
+from .models import Comment,Confession,Profile
 from django.dispatch import receiver
 from django.conf import settings
 import logging
@@ -25,9 +25,3 @@ def email_to_approve_comment(instance,**kwargs):
 def create_profile(instance,created,**kwargs):
     if created:
         Profile.objects.get_or_create(user=instance)
-@receiver(post_save,sender=Tag)
-def email_to_approve_tag(instance,**kwargs):
-    send_mail(subject=f'New tag was created by user and requires checking',
-              message=f'There was a new tag made, details(name:{instance.name})',
-              from_email= settings.EMAIL_HOST_USER,
-              recipient_list=['ivanfilipets115@gmail.com'])
