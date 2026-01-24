@@ -13,7 +13,7 @@ class Comment(models.Model):
         default=None,
         on_delete=models.SET_NULL,
     )
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=True)
 
 class Confession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
