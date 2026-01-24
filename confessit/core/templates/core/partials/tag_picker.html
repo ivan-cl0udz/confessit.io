@@ -1,0 +1,26 @@
+{% if selected_tags %}
+    <div class="mb-3">
+        <div class="tag-note mb-2">Selected</div>
+        <div class="tag-grid">
+            {% for tag in selected_tags %}
+                <label class="tag-chip is-selected">
+                    <input type="checkbox" name="tags" value="{{ tag.id }}" checked>
+                    <span>{{ tag.name }}</span>
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+<div class="tag-note mb-2">Available</div>
+<div class="tag-scroll">
+    <div class="tag-grid">
+        {% for tag in available_tags %}
+            <label class="tag-chip">
+                <input type="checkbox" name="tags" value="{{ tag.id }}">
+                <span>{{ tag.name }}</span>
+            </label>
+        {% empty %}
+            <div class="tag-note">No tags match your search.</div>
+        {% endfor %}
+    </div>
+</div>

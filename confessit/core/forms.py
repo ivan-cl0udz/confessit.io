@@ -5,7 +5,7 @@ from .models import Confession, Profile,Comment,Tag
 class ConfessionForm(forms.ModelForm):
     class Meta:
         model = Confession
-        fields = ['title', 'description','tags']
+        fields = ['title', 'description','tags','comments_able']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -17,6 +17,9 @@ class ConfessionForm(forms.ModelForm):
                 'rows': 5
             }),
             'tags': forms.CheckboxSelectMultiple(),
+            'comments_able': forms.CheckboxInput(attrs={
+                'id': 'comment-toggle',
+            }),
         }
 
 

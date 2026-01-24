@@ -98,6 +98,16 @@ class MakeConfession(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tag_form'] = TagForm()
+        form = context.get('form')
+        if form and form.is_bound:
+            selected_ids = [int(tag_id) for tag_id in (form['tags'].value() or [])]
+        else:
+            selected_ids = []
+        selected_tags = Tag.objects.filter(id__in=selected_ids).order_by('name')
+        available_tags = Tag.objects.exclude(id__in=selected_ids).order_by('name')
+        context['selected_tags'] = selected_tags
+        context['available_tags'] = available_tags
+        context['selected_tag_ids'] = set(selected_ids)
         return context
 @method_decorator(cache_page(20), name="dispatch")
 class ConfessionDetails(DetailView):
@@ -115,6 +125,9 @@ class ConfessionDetails(DetailView):
         if not request.user.is_authenticated:
             return redirect(f"{reverse('login')}?next={request.path}")
         self.object = self.get_object()
+        if not self.object.comments_able:
+            messages.error(request, 'Comments are disabled for this confession.')
+            return redirect(self.object.get_absolute_url())
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -222,11 +235,13 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
 @login_required(login_url='login')
 def add_comment_to_post(request,confession_id):
     post_object = Confession.objects.get_or_create(id=confession_id)
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save()
-            post_object.comments.add(comment)
+    if post_object.comments_able == True:
+        if request.method == 'POST':
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save()
+                post_object.comments.add(comment)
+    messages.ERROR('Comments on this post are turned off')
 
     
 @login_required(login_url='login')
@@ -295,6 +310,9 @@ def reply_comment(request,comment_id):
     confession = Confession.objects.filter(comments=parent_comment).first()
     if not confession:
         raise Http404("Confession not found for this comment.")
+    if not confession.comments_able:
+        messages.error(request, 'Comments are disabled for this confession.')
+        return redirect(confession.get_absolute_url())
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -326,4 +344,23 @@ def add_tag(request):
     if next_url:
         return redirect(next_url)
     return redirect('confession_create')
+
+@login_required(login_url='login')
+def tag_search(request):
+    query = request.GET.get('q', '').strip()
+    selected_ids = [int(tag_id) for tag_id in request.GET.getlist('tags') if tag_id.isdigit()]
+    selected_tags = Tag.objects.filter(id__in=selected_ids).order_by('name')
+    available_tags = Tag.objects.exclude(id__in=selected_ids)
+    if query:
+        available_tags = available_tags.filter(name__icontains=query)
+    available_tags = available_tags.order_by('name')
+    return render(
+        request,
+        'core/partials/tag_picker.html',
+        {
+            'selected_tags': selected_tags,
+            'available_tags': available_tags,
+            'selected_tag_ids': set(selected_ids),
+        },
+    )
         
