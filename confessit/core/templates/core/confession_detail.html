@@ -106,20 +106,27 @@
                             </details>
                             {% with replies=comment.comment_set.all %}
                                 {% if replies %}
-                                    <div class="d-grid gap-2 mt-3 ms-3">
-                                        {% for reply in replies %}
-                                            <div class="p-2 rounded border">
-                                                <div class="small text-muted mb-1">
-                                                    {% if reply.user %}
-                                                        {{ reply.user.username }}
-                                                    {% else %}
-                                                        Anonymous
-                                                    {% endif %}
-                                                </div>
-                                                <div class="text-muted">{{ reply.content|linebreaksbr }}</div>
+                                    <details class="reply-toggle mt-3 ms-3">
+                                        <summary class="btn btn-outline-dark btn-sm">
+                                            View replies ({{ replies|length }})
+                                        </summary>
+                                        <div class="reply-panel mt-2">
+                                            <div class="d-grid gap-2">
+                                                {% for reply in replies %}
+                                                    <div class="p-2 rounded border">
+                                                        <div class="small text-muted mb-1">
+                                                            {% if reply.user %}
+                                                                {{ reply.user.username }}
+                                                            {% else %}
+                                                                Anonymous
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="text-muted">{{ reply.content|linebreaksbr }}</div>
+                                                    </div>
+                                                {% endfor %}
                                             </div>
-                                        {% endfor %}
-                                    </div>
+                                        </div>
+                                    </details>
                                 {% endif %}
                             {% endwith %}
                         </div>
