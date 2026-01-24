@@ -35,7 +35,7 @@ if DEBUG:
     ]
 
 
-ALLOWED_HOSTS = _split_env_list(os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"))
+ALLOWED_HOSTS = _split_env_list(os.getenv("DJANGO_ALLOWED_HOSTS",""))
 render_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME", "")
 if render_hostname:
     ALLOWED_HOSTS.append(render_hostname)
