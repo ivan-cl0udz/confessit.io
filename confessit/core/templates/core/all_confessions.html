@@ -9,9 +9,15 @@
         <h1 class="brand-title mb-2">All confessions</h1>
         <p class="text-muted mb-0">Browse everything that has been shared so far.</p>
     </div>
-    <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
-        <a class="btn {% if current_sort == 'newest' %}btn-sea{% else %}btn-outline-dark{% endif %}" href="{% url 'all_confessions' %}?sort=newest">Newest</a>
-        <a class="btn {% if current_sort == 'liked' %}btn-sea{% else %}btn-outline-dark{% endif %}" href="{% url 'all_confessions' %}?sort=liked">Most liked</a>
+    <div class="col-lg-4 d-flex justify-content-lg-end">
+        <form method="get" action="{% url 'all_confessions' %}" class="sort-toggle">
+            <span>Newest</span>
+            <label class="switch">
+                <input type="checkbox" name="sort" value="liked" {% if current_sort == 'liked' %}checked{% endif %} aria-label="Toggle sort by most liked" onchange="this.form.submit()">
+                <span class="slider"></span>
+            </label>
+            <span>Most liked</span>
+        </form>
     </div>
 </div>
 
