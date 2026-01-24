@@ -88,9 +88,10 @@ class ConfessionDetails(DetailView):
         return self.render_to_response(self.get_context_data(comment_form=form))
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        all_comments = self.object.comments.all()
         context['comment_form'] = kwargs.get('comment_form', CommentForm())
-        context['comments'] = self.object.comments.all()
-        context['comment_count'] = context['comments'].count()
+        context['comments'] = all_comments.filter(parent_comment__isnull=True)
+        context['comment_count'] = all_comments.count()
         context['favourite_count'] = self.object.favourites.count()
         context['is_favourited'] = (
             self.request.user.is_authenticated
@@ -246,3 +247,20 @@ def report(request, confession_id):
         form = ReportForm()
     return render(request, 'core/report_post.html', {'form': form, 'post': post})
             
+@login_required(login_url='login')
+def reply_comment(request,comment_id):
+    parent_comment = get_object_or_404(Comment, id=comment_id)
+    confession = Confession.objects.filter(comments=parent_comment).first()
+    if not confession:
+        raise Http404("Confession not found for this comment.")
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.parent_comment = parent_comment
+            comment.save()
+            confession.comments.add(comment)
+            return redirect(confession.get_absolute_url())
+        messages.error(request, 'Form data is incorrect')
+    return redirect(request.META.get('HTTP_REFERER', confession.get_absolute_url()))

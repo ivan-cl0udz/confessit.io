@@ -6,8 +6,9 @@ from PIL import Image
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
-    comments = models.ManyToManyField('Comment')
+    parent_comment = models.ForeignKey('self',null=True,default=None)
     is_approved = models.BooleanField(default=False)
+
 class Confession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=30)
