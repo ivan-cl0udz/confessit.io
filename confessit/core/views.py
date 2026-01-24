@@ -52,6 +52,41 @@ class HomePage(ListView):
             context['unapproved_confessions'] = Confession.objects.none()
             context['liked_confession_ids'] = []
         return context
+
+@method_decorator(cache_page(20), name="dispatch")
+class AllConfessions(ListView):
+    model = Confession
+    template_name = 'core/all_confessions.html'
+
+    def get_queryset(self):
+        base_qs = (
+            Confession.objects
+            .select_related("user")
+            .prefetch_related("comments", "favourites")
+        )
+        if self.request.user.is_authenticated:
+            base_qs = base_qs.filter(
+                models.Q(is_approved=True) | models.Q(user=self.request.user)
+            )
+        else:
+            base_qs = base_qs.filter(is_approved=True)
+        sort_key = self.request.GET.get('sort', 'newest')
+        if sort_key == 'liked':
+            return base_qs.annotate(
+                like_count=models.Count('favourites')
+            ).order_by('-like_count', '-created_at')
+        return base_qs.order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_sort'] = self.request.GET.get('sort', 'newest')
+        if self.request.user.is_authenticated:
+            context['liked_confession_ids'] = list(
+                self.request.user.favourite_confessions.values_list('id', flat=True)
+            )
+        else:
+            context['liked_confession_ids'] = []
+        return context
 class MakeConfession(LoginRequiredMixin, CreateView):
     model = Confession
     form_class = ConfessionForm
@@ -267,3 +302,4 @@ def reply_comment(request,comment_id):
             return redirect(confession.get_absolute_url())
         messages.error(request, 'Form data is incorrect')
     return redirect(request.META.get('HTTP_REFERER', confession.get_absolute_url()))
+

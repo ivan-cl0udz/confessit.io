@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Confessit | All Confessions{% endblock %}
+
+{% block content %}
+<div class="row g-4 align-items-center mb-4">
+    <div class="col-lg-8">
+        <h1 class="brand-title mb-2">All confessions</h1>
+        <p class="text-muted mb-0">Browse everything that has been shared so far.</p>
+    </div>
+    <div class="col-lg-4 d-flex flex-wrap justify-content-lg-end gap-2">
+        <a class="btn {% if current_sort == 'newest' %}btn-sea{% else %}btn-outline-dark{% endif %}" href="{% url 'all_confessions' %}?sort=newest">Newest</a>
+        <a class="btn {% if current_sort == 'liked' %}btn-sea{% else %}btn-outline-dark{% endif %}" href="{% url 'all_confessions' %}?sort=liked">Most liked</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for confession in object_list %}
+        <div class="col-md-6 col-lg-4 fade-in">
+            <div class="confession-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    {% if confession.user %}
+                        <a class="btn btn-outline-dark btn-sm" href="{% url 'profile' confession.user.pk %}">
+                            {{ confession.user.username }}
+                        </a>
+                    {% else %}
+                        <span class="confession-meta">Anonymous</span>
+                    {% endif %}
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="confession-meta">{{ confession.created_at|date:"M d, Y" }}</div>
+                        <a class="like-btn" href="{% url 'confession_report' confession.pk %}" aria-label="Report confession">
+                            <img class="like-icon" src="{% static 'core/icons/flag-unfilled.svg' %}" alt="">
+                        </a>
+                    </div>
+                </div>
+                <h5 class="brand-title">{{ confession.title }}</h5>
+                {% if not confession.is_approved %}
+                    <span class="pending-pill mt-2">Pending</span>
+                {% endif %}
+                <p class="text-muted mt-3">{{ confession.description|truncatechars:160 }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a class="btn btn-link p-0" href="{% url 'confession_detail' confession.pk %}">Read more</a>
+                    <div class="d-flex align-items-center gap-2">
+                        <a class="like-btn" href="{% url 'confession_detail' confession.pk %}" aria-label="View comments">
+                            <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M20 3H4c-1.1 0-2 .9-2 2v15l4-4h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                            <span class="like-count">{{ confession.comments.count }}</span>
+                        </a>
+                        {% if user.is_authenticated %}
+                            {% if confession.id in liked_confession_ids %}
+                                {% include "core/partials/like_button.html" with confession=confession is_favourited=True %}
+                            {% else %}
+                                {% include "core/partials/like_button.html" with confession=confession is_favourited=False %}
+                            {% endif %}
+                        {% else %}
+                            <a class="like-btn" href="{% url 'login' %}" aria-label="Login to like">
+                                <svg class="like-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                                <span class="like-count">{{ confession.favourites.count }}</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="confession-card p-4 text-center">
+                <h5 class="brand-title">No confessions yet</h5>
+                <p class="text-muted">Be the first to share a story and set the tone.</p>
+                <a class="btn btn-sea" href="{% url 'confession_create' %}">Share your confession</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

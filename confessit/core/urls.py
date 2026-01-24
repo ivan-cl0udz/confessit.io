@@ -17,6 +17,7 @@ urlpatterns = [
     path('search_results/',views.search_views,name='search'),
     path('change-profile/',views.UpdateProfileView.as_view(),name='change_profile'),
     path('liked-confessions/',views.Liked_Confessions.as_view(),name='liked_confessions'),
+    path('confessions/', views.AllConfessions.as_view(), name='all_confessions'),
     path('ads.txt', views.ads_txt, name='ads_txt'),
     path('terms/', views.terms_view, name='terms'),
     
