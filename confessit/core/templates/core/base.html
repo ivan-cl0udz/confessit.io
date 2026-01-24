@@ -209,6 +209,16 @@
             box-shadow: 0 16px 36px rgba(15, 30, 50, 0.1);
         }
 
+        .page-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1 0 auto;
+        }
+
         form input,
         form textarea,
         form select {
@@ -482,7 +492,7 @@
         }
     </style>
 </head>
-<body>
+<body class="page-shell">
     <nav class="navbar navbar-expand-lg navbar-light glass-nav sticky-top">
         <div class="container">
             <a class="navbar-brand brand-title" href="{% url 'home' %}">Confessit</a>
@@ -535,7 +545,7 @@
         </div>
     </nav>
 
-    <main class="container py-5">
+    <main class="container py-5 page-content">
         {% if messages %}
             <div class="mb-4">
                 {% for message in messages %}
