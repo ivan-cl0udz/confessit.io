@@ -6,7 +6,13 @@ from PIL import Image
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField()
-    parent_comment = models.ForeignKey('self',null=True,default=None)
+    parent_comment = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+    )
     is_approved = models.BooleanField(default=False)
 
 class Confession(models.Model):
