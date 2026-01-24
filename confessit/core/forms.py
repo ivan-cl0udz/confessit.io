@@ -24,7 +24,7 @@ class RegisterForm(UserCreationForm):
         'class': 'form-control',
         'placeholder': 'Enter your email'
     }))
-
+    read_terms = forms.BooleanField(required=True)
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
@@ -34,6 +34,9 @@ class RegisterForm(UserCreationForm):
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Choose a username'
+        })
+        self.fields['read_terms'].widget.attrs.update({
+            'class': 'form-check-input'
         })
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
